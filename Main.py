@@ -72,6 +72,7 @@ def warning(real, x, y):
 
         return True
 
+    
     #left
     if x > 0 and not real[y][x - 1]:
 
