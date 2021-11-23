@@ -1,113 +1,120 @@
+from PointClass import Point
 
 
 """
-4x4 grid - 16 possile slots
+The program workes by taking in an actaul board representing the actual state of the board ie. where the gold,
+robot, and holes are.
 
-1 slot Boss
-many slots holes
-Every Map solvable
+It then takes in a board with no data and tries to recreate the original board. The only clues the function gets is
+if the neighbor has a danger square adjacent to it.
 
-Get Warnings if something dangerous is one of your adjacent neighbors.
-Cannot Step out of bounds of the matrix
-
-
-If you step to a square and you don't recieve warnings then all adjacent squares are safe.
+It then uses theese clues to recreate the orginal board.
 
 
-Goal:
-
-    Find Gold
-    Avoid Going into pits and robot
-    Destroy Robot
-    Reuturn to original position
-
-
-
-Givens:
-
-    Every time you encounter a warning 
-    have to step to a valid square
-
-
-
-Prac Siumlation:
-
-    Real Matrix 
-    Current Matrix
-    Want to make current matrix into real matrix
-
-
-    Both Matrices store a 2-d list of boolean If it is it is true it is safe. If it is false then it has a danger square.
-
+The function assumes that all squares are danger squares. If the function does not recieve a warning that
+there is a hole nearby. The program will set all neighboring squares to safe and then one by one visits safe squares.
 
 
 """
 
 def PrintMatrix(matrix):
 
-    print("Matrix:")
-    print()
+    """
+    Displays locations of all holes in the matrix
+
+    matrix: List<List<Point>>
+    """
 
     for i in range(len(matrix)):
-        
-        print("   ",end="")
 
         for j in range(len(matrix[i])):
-            
-            print(matrix[i][j], end="  ")
 
-        print()
+            if not matrix[i][j].isSafe:
+
+                print(i, j)
 
 
     
-def warning(real, x, y):
+def warning(real, x, y, find):
+
+    """
+    This functions checks for holes, gold, and robots. It takes in the actual matrix and a lcoation(x,y).
+
+    It also takes in a parameter called find. Find is a string that reprents data about a square.
+
+    Gold --> "g"
+    hole--> ""
+    robot --> "r"
+
+    Function searches for find in its neighbors.
+
+
+
+    real: List<List<str>>
+    x: int
+    y: int
+    find: str
+    """
 
     #top
-    if y > 0 and not real[y - 1][x]:
+    if y > 0 and real[y - 1][x] == find:
 
         return True
 
     #bottom
-    if y < len(real) - 1 and not real[y + 1][x]:
+    if y < len(real) - 1 and real[y + 1][x] == find:
 
         return True
 
     
     #left
-    if x > 0 and not real[y][x - 1]:
+    if x > 0 and real[y][x - 1] == find:
 
         return True
 
     #right
-    if x < len(real[y]) - 1 and not real[y][x + 1]:
+    if x < len(real[y]) - 1 and real[y][x + 1] == find:
 
         return True
 
     return False
 
 
+
 def add_neighbors(matrix, row, col):
+
+    """
+    Sets all of the neighbors attributes(isSafe) to True. 
+
+    The algorithm will call this function if it doesn't recieve a notficaiton that there is a hole or a robot nearby.
+
+
+
+    matrix: list<list<points>>
+    row: int
+    col: int 
+    """
 
     ret = []
 
-    if col > 0 and not matrix[row][col - 1]:
+    if col > 0 and not matrix[row][col - 1].isSafe:
 
-        matrix[row][col - 1] = True
+        matrix[row][col - 1].isSafe = True
         ret.append((row, col - 1))
 
-    if row < len(matrix) - 1 and not matrix[row + 1][col]:
+    if row < len(matrix) - 1 and not matrix[row + 1][col].isSafe:
 
-        matrix[row + 1][col] = True
+        matrix[row + 1][col].isSafe = True
         ret.append((row + 1, col))
 
-    if col < len(matrix[row]) - 1 and not matrix[row][col + 1]:
+    if col < len(matrix[row]) - 1 and not matrix[row][col + 1].isSafe:
 
-        matrix[row][col + 1] = True
+        matrix[row][col + 1].isSafe = True
         ret.append((row, col + 1))
 
-    if row > 0 and not matrix[row - 1][col]:
+    if row > 0 and not matrix[row - 1][col].isSafe:
 
-        matrix[row - 1][col] = True
+        matrix[row - 1][col].isSafe = True
         ret.append((row - 1, col))
 
     return ret
@@ -117,43 +124,60 @@ def add_neighbors(matrix, row, col):
 
 def solve(matrix, real, row, col):
 
+    """
+    This is the main function. It takes in a two 2-d lists.
+    The "real" 2-d list is a 2-d lists of one letter strings. This displays the actual state of the board.
+
+    "g" --> gold
+    "" --> hole
+    "r" --> robot
+
+    The real matrix is a 2-d list. All of the indices are objects from the Point class. All of the indices 
+    are intially set to danger squares. When there is no notifications that there is a robot nearby the neighbors
+    are set that they are safe.
+    """
+
     visit = []
     path = []
 
     while visit or not path:
-    
-        w = warning(real, col, row)
+   
+        w = warning(real, col, row, "")
 
         if not w:
-
+           
             visit += add_neighbors(matrix, row, col)
 
             path.append((row, col))
             row, col = visit.pop()
 
         else:
-
+   
             row, col = path.pop()
 
         
 
-matrix = [[False, False, False, False],
-            [False, False, False, False], 
-            [False, False, False,False], 
-            [False, False, False, False]]
+
+#2-d list of Points
+matrix = [[Point() for i in range(4)] for j in range(4)]
 
 
+#2-d lists of strings
+real = [
+            ["", "", "s", "s"],
+            ["s", "s", "s", "s"],
+            ["s", "s", "s", "s"],
+            ["s", "s","s", ""]
 
-real = [[False, False, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, False]]
+        ]
 
 
+#starting locations
 row, col = 3, 0
 
 solve(matrix, real, row, col)
 
-
 PrintMatrix(matrix)
-
 
 
 
