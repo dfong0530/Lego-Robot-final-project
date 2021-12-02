@@ -1,4 +1,4 @@
-from PointClass import Point
+from Helper.PointClass import Point
 
 
 """
@@ -13,6 +13,13 @@ It then uses theese clues to recreate the orginal board.
 
 The function assumes that all squares are danger squares. If the function does not recieve a warning that
 there is a hole nearby. The program will set all neighboring squares to safe and then one by one visits safe squares.
+
+
+0 -> nothing
+1 -> Exist a breeze
+2 --> stench (Wumpus)
+4 --> glitter (gold)
+8 --> On Gold square
 
 
 """
@@ -99,25 +106,85 @@ def add_neighbors(matrix, row, col):
 
     if col > 0 and not matrix[row][col - 1].isSafe:
 
-        matrix[row][col - 1].isSafe = True
+        matrix[row][col - 1].makeSafe()
         ret.append((row, col - 1))
 
     if row < len(matrix) - 1 and not matrix[row + 1][col].isSafe:
 
-        matrix[row + 1][col].isSafe = True
+        matrix[row + 1][col].makeSafe()
         ret.append((row + 1, col))
 
     if col < len(matrix[row]) - 1 and not matrix[row][col + 1].isSafe:
 
-        matrix[row][col + 1].isSafe = True
+        matrix[row][col + 1].makeSafe()
         ret.append((row, col + 1))
 
     if row > 0 and not matrix[row - 1][col].isSafe:
 
-        matrix[row - 1][col].isSafe = True
+        matrix[row - 1][col].makeSafe()
         ret.append((row - 1, col))
 
     return ret
+
+
+def find_gold(real, col, row):
+
+    if row > 0 and real[row - 1][col] == "g":
+
+        return (row - 1, col)
+
+    elif col < 3 and real[row][col + 1] == "g":
+
+        return (row, col + 1)
+
+    elif row < 3 and real[row + 1][col] == "g":
+
+        return (row + 1, col)
+
+    elif col > 0 and real[row][col - 1] == "g":
+
+        return (row, col - 1)
+
+    return (-1,-1)
+
+def check_double_gold(matrix,row, col):
+
+    if row > 0 and matrix[row - 1][col].isGold:
+
+        return True
+
+    elif col < 3 and matrix[row][col + 1].isGold:
+
+        return True
+
+    elif row < 3 and matrix[row + 1][col].isGold:
+
+        return True
+
+    elif col > 0 and matrix[row][col - 1].isGold:
+
+        return True
+
+    return False
+    
+
+def add_possible_gold(matrix, row, col):
+
+    if row > 0 and not matrix[row - 1][col].isSafe:
+
+        matrix[row - 1][col].isGold = True
+
+    if col < 3 and not matrix[row][col + 1].isSafe:
+
+        matrix[row][col + 1].isGold = True
+
+    if row < 3 and not matrix[row + 1][col].isSafe:
+
+        matrix[row + 1][col].isGold = True
+
+    if col > 0 and not real[row][col - 1].isSafe:
+
+        matrix[row][col - 1].isGold = True
 
 
 
@@ -138,22 +205,43 @@ def solve(matrix, real, row, col):
     """
 
     visit = []
-    path = []
+    matrix[3][0].makeSafe()
 
-    while visit or not path:
-   
+    while True:
+        print(row,col)
+
         w = warning(real, col, row, "")
+        g = warning(real, col, row, "g")
+        
+        # If we know alll other neighboars
+        # IF we get a g twice
+        #If g and no warning search all neighbors until gold is found
 
-        if not w:
+
+        #All neighboars are safe
+        if not w and not g:
            
             visit += add_neighbors(matrix, row, col)
 
-            path.append((row, col))
-            row, col = visit.pop()
+        elif not w and g:
+            
+            return find_gold(real, col, row)
 
-        else:
-   
-            row, col = path.pop()
+        elif g:
+      
+            if check_double_gold(matrix, row, col):
+         
+                return find_gold(real, col, row)
+
+            add_possible_gold(matrix, row, col)
+
+            
+        row, col = visit.pop()
+
+
+
+
+
 
         
 
@@ -164,10 +252,10 @@ matrix = [[Point() for i in range(4)] for j in range(4)]
 
 #2-d lists of strings
 real = [
-            ["", "", "s", "s"],
+            ["s", "s", "", "g"],
+            ["s", "", "", "s"],
             ["s", "s", "s", "s"],
-            ["s", "s", "s", "s"],
-            ["s", "s","s", ""]
+            ["s", "s","s", "s"]
 
         ]
 
@@ -175,10 +263,10 @@ real = [
 #starting locations
 row, col = 3, 0
 
-solve(matrix, real, row, col)
+loc = solve(matrix, real, row, col)
 
-PrintMatrix(matrix)
 
+print(loc)
 
 
 
