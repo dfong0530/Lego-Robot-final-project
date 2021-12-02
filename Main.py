@@ -97,6 +97,15 @@ def add_neighbors(matrix, row, col):
 
 
 
+    Looks North, East South, West. 
+
+    It first checks if it can check north. For example. If the row is 0 it can't check north or elsee there will be an error.
+
+    If looks for squares that are not already safe.
+    If then makes the current square safe and adds the coordinate to ret list. 
+
+    ret list will be added to VISIT in the future. 
+
     matrix: list<list<points>>
     row: int
     col: int 
@@ -129,6 +138,12 @@ def add_neighbors(matrix, row, col):
 
 def find_gold(real, col, row):
 
+    """
+    This function finds the gold in the real matrix. I have either recieved a notification that there is gold nearby
+    without recieving a notification that there is a wumpus nearby or have found out that there is a neighbor 
+    with two adjacent sides that have isGold set to True.
+    """
+
     if row > 0 and real[row - 1][col] == "g":
 
         return (row - 1, col)
@@ -148,6 +163,16 @@ def find_gold(real, col, row):
     return (-1,-1)
 
 def check_double_gold(matrix,row, col):
+
+    """
+    This function checks if there is a neighbor who has isGold set to True. 
+
+    This function will only be called if I get a gold notification. 
+
+    For example, let's say I get a gold notification. If I find the at one of the 
+    neighbors has it's isGold attribute set to True. Then that square is the square with Gold.
+    
+    """
 
     if row > 0 and matrix[row - 1][col].isGold:
 
@@ -169,6 +194,12 @@ def check_double_gold(matrix,row, col):
     
 
 def add_possible_gold(matrix, row, col):
+
+    """
+    Sets the attribute isGold of all neighboars to True as long as it isn't a safe square.
+    A safe square only has one attribute set to True and that's isSafe.
+    
+    """
 
     if row > 0 and not matrix[row - 1][col].isSafe:
 
