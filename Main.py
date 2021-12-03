@@ -41,6 +41,10 @@ def PrintMatrix(matrix):
                 print(i, j)
 
 
+"""
+Helper Hole functions
+
+"""
     
 def warning(real, x, y, find):
 
@@ -136,6 +140,15 @@ def add_neighbors(matrix, row, col):
     return ret
 
 
+"""
+
+Helper Gold functions
+
+"""
+
+
+
+
 def find_gold(real, col, row):
 
     """
@@ -218,7 +231,87 @@ def add_possible_gold(matrix, row, col):
         matrix[row][col - 1].isGold = True
 
 
+"""
+Helper Robot functions
+"""
 
+def find_robot_and_make_safe_square(real, row, col):
+
+    """
+    Very similar to find_gold. This function takes determines exactly where the robot is.
+    
+    """
+
+    if row > 0 and real[row - 1][col] == "r":
+
+        return [(row - 1, col)]
+
+    elif col < 3 and real[row][col + 1] == "r":
+
+        return [(row, col + 1)]
+
+    elif row < 3 and real[row + 1][col] == "r":
+
+        return [(row + 1, col)]
+
+    elif col > 0 and real[row][col - 1] == "r":
+
+        return [(row, col - 1)]
+
+    return []
+
+def add_possible_robot(matrix, row, col):
+
+    """
+    Takes in a matrix and makes any neighbors that aren't safe have a isRobot attribute set to True.
+    """
+
+    if row > 0 and not matrix[row - 1][col].isSafe:
+
+        matrix[row - 1][col].isRobot = True
+
+    if col < 3 and not matrix[row][col + 1].isSafe:
+
+        matrix[row][col + 1].isRobot = True
+
+    if row < 3 and not matrix[row + 1][col].isSafe:
+
+        matrix[row + 1][col].isRobot = True
+
+    if col > 0 and not real[row][col - 1].isSafe:
+
+        matrix[row][col - 1].isRobot = True
+
+
+def check_double_robot(matrix, row, col):
+
+    """
+    Checks if there are any neighbors that have the isRobot property set to True.
+    """
+
+    if row > 0 and matrix[row - 1][col].isRobot:
+
+        return True
+
+    elif col < 3 and matrix[row][col + 1].isRobot:
+
+        return True
+
+    elif row < 3 and matrix[row + 1][col].isRobot:
+
+        return True
+
+    elif col > 0 and matrix[row][col - 1].isRobot:
+
+        return True
+
+    return False
+
+
+"""
+Main Solve Functions
+
+"""
 
 def solve(matrix, real, row, col):
 
@@ -243,6 +336,7 @@ def solve(matrix, real, row, col):
 
         w = warning(real, col, row, "")
         g = warning(real, col, row, "g")
+        r = warning(real, col, row, "r")
         
         # If we know alll other neighboars
         # IF we get a g twice
@@ -250,15 +344,15 @@ def solve(matrix, real, row, col):
 
 
         #All neighboars are safe
-        if not w and not g:
+        if not w and not g and not r:
            
             visit += add_neighbors(matrix, row, col)
 
-        elif not w and g:
+        if not w and not r and g:
             
             return find_gold(real, col, row)
 
-        elif g:
+        if g:
       
             if check_double_gold(matrix, row, col):
          
@@ -266,15 +360,24 @@ def solve(matrix, real, row, col):
 
             add_possible_gold(matrix, row, col)
 
-            
+        if r:
+        
+            if not w or check_double_robot(matrix, row, col):
+                
+                # Loc --> [(row, col)]
+                #Make the current location safe and add it to visit stack
+                loc = find_robot_and_make_safe_square(real, row, col)
+                matrix[loc[0][0]][loc[0][1]].makeSafe()
+
+                visit += loc 
+
+            else:
+
+                add_possible_robot(matrix, row, col)
+ 
         row, col = visit.pop()
 
 
-
-
-
-
-        
 
 
 #2-d list of Points
@@ -298,15 +401,5 @@ loc = solve(matrix, real, row, col)
 
 
 print(loc)
-
-
-
-
-
-
-
-
-
-    
 
 
