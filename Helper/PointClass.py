@@ -22,7 +22,7 @@ where the robot and the gold actually is.
 
 class Point(object):
 
-    def __init__(self, isSafe = False, isDangerous = True, isGold = False, isRobot = False):
+    def __init__(self, isSafe = False, isDangerous = True, isGold = False, isRobot = False, num = 0):
 
         """
         isSafe --> IF this is set to True. Then the square is 100 percent safe and has nothing there.
@@ -36,6 +36,18 @@ class Point(object):
         self.isDangerous = isDangerous
         self.isGold = isGold
         self.isRobot = isRobot
+        self.num = num
+
+    def __str__(self):
+
+        temp = "|{:>4}|".format(self.num)
+
+        return temp
+
+    def getNum(self):
+
+        return self.num
+
 
     def makeSafe(self):
 

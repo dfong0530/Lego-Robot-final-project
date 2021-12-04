@@ -1,4 +1,6 @@
 from Helper.PointClass import Point
+from DFS1 import *
+from Eric import *
 
 
 """
@@ -24,21 +26,21 @@ there is a hole nearby. The program will set all neighboring squares to safe and
 
 """
 
-def PrintMatrix(matrix):
+# def PrintMatrix(matrix):
 
-    """
-    Displays locations of all holes in the matrix
+#     """
+#     Displays locations of all holes in the matrix
 
-    matrix: List<List<Point>>
-    """
+#     matrix: List<List<Point>>
+#     """
 
-    for i in range(len(matrix)):
+#     for i in range(len(matrix)):
 
-        for j in range(len(matrix[i])):
+#         for j in range(len(matrix[i])):
 
-            if not matrix[i][j].isSafe:
+#             if not matrix[i][j].isSafe:
 
-                print(i, j)
+#                 print(i, j)
 
 
 """
@@ -46,49 +48,49 @@ Helper Hole functions
 
 """
     
-def warning(real, x, y, find):
+# def warning(real, x, y, find):
 
-    """
-    This functions checks for holes, gold, and robots. It takes in the actual matrix and a lcoation(x,y).
+#     """
+#     This functions checks for holes, gold, and robots. It takes in the actual matrix and a lcoation(x,y).
 
-    It also takes in a parameter called find. Find is a string that reprents data about a square.
+#     It also takes in a parameter called find. Find is a string that reprents data about a square.
 
-    Gold --> "g"
-    hole--> ""
-    robot --> "r"
+#     Gold --> "g"
+#     hole--> ""
+#     robot --> "r"
 
-    Function searches for find in its neighbors.
+#     Function searches for find in its neighbors.
 
 
 
-    real: List<List<str>>
-    x: int
-    y: int
-    find: str
-    """
+#     real: List<List<str>>
+#     x: int
+#     y: int
+#     find: str
+#     """
 
-    #top
-    if y > 0 and real[y - 1][x] == find:
+#     #top
+#     if y > 0 and real[y - 1][x] == find:
 
-        return True
+#         return True
 
-    #bottom
-    if y < len(real) - 1 and real[y + 1][x] == find:
+#     #bottom
+#     if y < len(real) - 1 and real[y + 1][x] == find:
 
-        return True
+#         return True
 
     
-    #left
-    if x > 0 and real[y][x - 1] == find:
+#     #left
+#     if x > 0 and real[y][x - 1] == find:
 
-        return True
+#         return True
 
-    #right
-    if x < len(real[y]) - 1 and real[y][x + 1] == find:
+#     #right
+#     if x < len(real[y]) - 1 and real[y][x + 1] == find:
 
-        return True
+#         return True
 
-    return False
+#     return False
 
 
 
@@ -146,34 +148,68 @@ Helper Gold functions
 
 """
 
+def find_gold_direc(matrix, row, col):
+
+    if row > 0:
+
+        forward()
+
+        if int(input("Get Data: ")) == 8:
+
+            return (row - 1, col)
+
+    
+    if col < len(matrix[row]) - 1:
+
+        right()
+
+        if int(input("Get Data: ")) == 8:
+
+            return (row, col + 1)
+
+    if row < len(matrix) - 1:
+
+        back()
+
+        if int(input("Get Data: ")) == 8:
+
+            return (row + 1, col)
+
+    if col > 0:
+
+        left()
+
+        if int(input("Get Data")) == 8:
+
+            return (row, col - 1)
 
 
 
-def find_gold(real, col, row):
+# def find_gold(real, col, row):
 
-    """
-    This function finds the gold in the real matrix. I have either recieved a notification that there is gold nearby
-    without recieving a notification that there is a wumpus nearby or have found out that there is a neighbor 
-    with two adjacent sides that have isGold set to True.
-    """
+#     """
+#     This function finds the gold in the real matrix. I have either recieved a notification that there is gold nearby
+#     without recieving a notification that there is a wumpus nearby or have found out that there is a neighbor 
+#     with two adjacent sides that have isGold set to True.
+#     """
 
-    if row > 0 and real[row - 1][col] == "g":
+#     if row > 0 and real[row - 1][col] == "g":
 
-        return (row - 1, col)
+#         return (row - 1, col)
 
-    elif col < 3 and real[row][col + 1] == "g":
+#     elif col < 3 and real[row][col + 1] == "g":
 
-        return (row, col + 1)
+#         return (row, col + 1)
 
-    elif row < 3 and real[row + 1][col] == "g":
+#     elif row < 3 and real[row + 1][col] == "g":
 
-        return (row + 1, col)
+#         return (row + 1, col)
 
-    elif col > 0 and real[row][col - 1] == "g":
+#     elif col > 0 and real[row][col - 1] == "g":
 
-        return (row, col - 1)
+#         return (row, col - 1)
 
-    return (-1,-1)
+#     return (-1,-1)
 
 def check_double_gold(matrix,row, col):
 
@@ -189,21 +225,21 @@ def check_double_gold(matrix,row, col):
 
     if row > 0 and matrix[row - 1][col].isGold:
 
-        return True
+        return (row - 1, col)
 
     elif col < 3 and matrix[row][col + 1].isGold:
 
-        return True
+        return (row, col + 1)
 
     elif row < 3 and matrix[row + 1][col].isGold:
 
-        return True
+        return (row + 1, col)
 
     elif col > 0 and matrix[row][col - 1].isGold:
 
-        return True
+        return (row, col - 1)
 
-    return False
+    return (-1, -1)
     
 
 def add_possible_gold(matrix, row, col):
@@ -226,7 +262,7 @@ def add_possible_gold(matrix, row, col):
 
         matrix[row + 1][col].isGold = True
 
-    if col > 0 and not real[row][col - 1].isSafe:
+    if col > 0 and not matrix[row][col - 1].isSafe:
 
         matrix[row][col - 1].isGold = True
 
@@ -235,30 +271,30 @@ def add_possible_gold(matrix, row, col):
 Helper Robot functions
 """
 
-def find_robot_and_make_safe_square(real, row, col):
+# def find_robot_and_make_safe_square(real, row, col):
 
-    """
-    Very similar to find_gold. This function takes determines exactly where the robot is.
+#     """
+#     Very similar to find_gold. This function takes determines exactly where the robot is.
     
-    """
+#     """
 
-    if row > 0 and real[row - 1][col] == "r":
+#     if row > 0 and real[row - 1][col] == "r":
 
-        return [(row - 1, col)]
+#         return [(row - 1, col)]
 
-    elif col < 3 and real[row][col + 1] == "r":
+#     elif col < 3 and real[row][col + 1] == "r":
 
-        return [(row, col + 1)]
+#         return [(row, col + 1)]
 
-    elif row < 3 and real[row + 1][col] == "r":
+#     elif row < 3 and real[row + 1][col] == "r":
 
-        return [(row + 1, col)]
+#         return [(row + 1, col)]
 
-    elif col > 0 and real[row][col - 1] == "r":
+#     elif col > 0 and real[row][col - 1] == "r":
 
-        return [(row, col - 1)]
+#         return [(row, col - 1)]
 
-    return []
+#     return []
 
 def add_possible_robot(matrix, row, col):
 
@@ -278,7 +314,7 @@ def add_possible_robot(matrix, row, col):
 
         matrix[row + 1][col].isRobot = True
 
-    if col > 0 and not real[row][col - 1].isSafe:
+    if col > 0 and not matrix[row][col - 1].isSafe:
 
         matrix[row][col - 1].isRobot = True
 
@@ -291,29 +327,48 @@ def check_double_robot(matrix, row, col):
 
     if row > 0 and matrix[row - 1][col].isRobot:
 
-        return True
+        return (row - 1, col)
 
     elif col < 3 and matrix[row][col + 1].isRobot:
 
-        return True
+        return (row, col + 1)
 
     elif row < 3 and matrix[row + 1][col].isRobot:
 
-        return True
-
+        return (row + 1, col)
     elif col > 0 and matrix[row][col - 1].isRobot:
 
-        return True
+        return (row, col - 1)
 
-    return False
+    return (-1, -1)
 
+
+def move_robot(direc):
+
+    for d in direc:
+
+        if d == "u":
+
+            forward()
+
+        elif d == "r":
+
+            right()
+
+        elif d == "d":
+
+            back()
+
+        elif d == "l":
+
+            left()
 
 """
 Main Solve Functions
 
 """
 
-def solve(matrix, real, row, col):
+def solve(matrix, row, col):
 
     """
     This is the main function. It takes in a two 2-d lists.
@@ -329,20 +384,24 @@ def solve(matrix, real, row, col):
     """
 
     visit = []
+ 
     matrix[3][0].makeSafe()
 
     while True:
+
         print(row,col)
 
-        w = warning(real, col, row, "")
-        g = warning(real, col, row, "g")
-        r = warning(real, col, row, "r")
+        n = int(input("Get Data: "))
+        w, r, g, ag = process_input(n)
+
+        if ag:
+
+            return (row, col)
         
         # If we know alll other neighboars
         # IF we get a g twice
         #If g and no warning search all neighbors until gold is found
-
-
+        
         #All neighboars are safe
         if not w and not g and not r:
            
@@ -350,32 +409,45 @@ def solve(matrix, real, row, col):
 
         if not w and not r and g:
             
-            return find_gold(real, col, row)
+            return find_gold_direc(matrix, col, row)
 
         if g:
       
-            if check_double_gold(matrix, row, col):
+            if check_double_gold(matrix, row, col) != (-1, -1):
          
-                return find_gold(real, col, row)
+                final_loc = check_double_gold(matrix, row, col)
+                move_robot(DFS(matrix, col, row, final_loc[1], final_loc[0]))
+
+                return final_loc
 
             add_possible_gold(matrix, row, col)
 
         if r:
         
-            if not w or check_double_robot(matrix, row, col):
+            if check_double_robot(matrix, row, col) != (-1,-1):
                 
                 # Loc --> [(row, col)]
                 #Make the current location safe and add it to visit stack
-                loc = find_robot_and_make_safe_square(real, row, col)
-                matrix[loc[0][0]][loc[0][1]].makeSafe()
+                loc = check_double_robot(matrix, row, col)
+                robot_say("Destroy wumpus at row {0} col {1}".format(loc[0], loc[1]))
+                matrix[loc[0]][loc[1]].makeSafe()
 
-                visit += loc 
+                visit.append(loc) 
 
             else:
 
                 add_possible_robot(matrix, row, col)
- 
-        row, col = visit.pop()
+
+
+        newRow, newCol = visit.pop()
+
+        nextPath = DFS(matrix, col, row, newCol, newRow)
+
+        print(nextPath)
+        move_robot(DFS(nextPath))
+
+        row,col = newRow, newCol
+
 
 
 
@@ -385,21 +457,39 @@ matrix = [[Point() for i in range(4)] for j in range(4)]
 
 
 #2-d lists of strings
-real = [
-            ["s", "s", "", "g"],
-            ["s", "", "", "s"],
-            ["s", "s", "s", "s"],
-            ["s", "s","s", "s"]
+# real = [
+#             ["s", "s", "", "g"],
+#             ["s", "", "", "s"],
+#             ["s", "s", "s", "s"],
+#             ["s", "s","s", "s"]
 
-        ]
+#         ]
 
 
 #starting locations
 row, col = 3, 0
 
-loc = solve(matrix, real, row, col)
+robot_say("Hello I am Wally")
+
+try:
+
+    loc = solve(matrix, row, col)
+
+except:
+
+    robot_say("ERROR")
 
 
+
+print("----------------------------------------------------")
+print()
 print(loc)
+
+pathHome = DFS(matrix, loc[1], loc[0], 0, 3)
+
+print(pathHome)
+
+move_robot(pathHome)
+
 
 
