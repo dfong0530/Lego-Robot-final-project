@@ -6,7 +6,7 @@ Created on Sat Dec  4 15:47:30 2021
 """
 
 from PointClass import *
-
+import time # Delete this later- unncessary
 def process_input(num):
     num_remainder = num
     w, r, g, ag = False, False, False, False # hole, robot, gold, at gold
@@ -62,9 +62,11 @@ def legal_move(matrix, testee, sx, sy):
             #print(x, y)
             if not(0 <= x < 4) or not(0 <= y < 4):
                 return False
-            elif (not matrix[x][y].isSafe):
+            elif (not matrix[y][x].isSafe):
+                #print('matrix[x][y].isSafe', matrix[y][x].isSafe)
                 return False
 
+    #print('matrix[x][y].isSafe', matrix[y][x].isSafe)
     return True        
 def DFS(matrix, sx, sy, ex, ey):   
     #solved = False
@@ -89,11 +91,10 @@ def DFS(matrix, sx, sy, ex, ey):
         #time.sleep(1)
         #print("\n\n\n\n")
     #return list(queue[-1])
-
 '''
 def main():
     
-    
+
     manual_matrix = [
         
                 [Point(True, False, False, False, 0), Point(True, False, False, False, 0), Point(True, False, False, False, 0), Point(True, False, False, False, 0)],
@@ -103,7 +104,23 @@ def main():
     
             ]
     
-    DFS(manual_matrix, 0, 3, 3, -1)
+    
+    manual_matrix2 = [
+        
+                [Point(), Point(), Point(), Point()],
+                [Point(), Point(), Point(), Point()],
+                [Point(True, False, False, False, 0), Point(), Point(), Point()],
+                [Point(True, False, False, False, 0), Point(True, False, False, False, 0), Point(), Point()],
+    
+            ]
+    
+    for i in range(len(manual_matrix2)):
+        for j in range(len(manual_matrix2[i])):
+            print(manual_matrix[i][j], end ="")
+        print()
+    
+    
+    DFS(manual_matrix2, 0, 3, 0, 2)
     
 if __name__ == "__main__":
     main()
