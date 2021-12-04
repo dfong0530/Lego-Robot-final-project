@@ -5,6 +5,23 @@ Created on Sat Dec  4 15:47:30 2021
 @author: JV
 """
 
+def process_input(num):
+    num_remainder = num
+    w, r, g, ag = False, False, False, False # hole, robot, gold, at gold
+    while num_remainder > 0: # assumes num is an int
+        if num_remainder - 8 >= 0:
+            num_remainder -= 8
+            ag = True
+        elif num_remainder - 4 >= 0:
+            num_remainder -= 4
+            g = True
+        elif num_remainder - 2 >= 0:
+            num_remainder -= 2
+            r = True
+        elif num_remainder >= 0:
+            num_remainder -= 1
+            w = True
+    return (w, r, g, ag)
 
 def verify(matrix, moves, ex, ey, sx, sy):
     x = sx
@@ -59,4 +76,4 @@ def DFS(matrix, sx, sy, ex, ey):
                 queue.append(untested_path)
         solved = verify(matrix, queue[-1], ex, ey, sx, sy)
         
-    return queue[-1]
+    return list(queue[-1])
