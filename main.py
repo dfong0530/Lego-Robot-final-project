@@ -35,9 +35,10 @@ def turnRight():
 def turnLeft():
     motorLeft.run_to_rel_pos(position_sp= -310, speed_sp = 250)
     motorRight.run_to_rel_pos(position_sp= 310, speed_sp = 250)
+
     sleep(1)
 
-def Tesla():
+def forward():
     motorLeft.on(30)
     motorRight.on(30)
     while(leftSensor.reflected_light_intensity < 20 and rightSensor.reflected_light_intensity < 20):
@@ -78,22 +79,43 @@ def Tesla():
     motorLeft.stop()
     motorRight.stop()
 
+def left():
+
+    turnLeft()
+    forward()
+    turnRight()
+
+def right():
+    turnRight()
+    forward()
+    turnLeft()
+    
+def back():
+    turnRight()
+    turnRight()
+    forward()
+    turnLeft()
+    turnLeft()
+
+def robot_say(words):
+    sound.speak(words)
+
 if __name__ == "__main__":
 
-    Tesla()
+    forward()
     turnLeft()
-    Tesla()
+    forward()
     turnRight()
-    Tesla()
+    forward()
     turnRight()
-    Tesla()
+    forward()
     turnRight()
-    Tesla()
+    forward()
     turnRight()
-    Tesla()
+    forward()
     turnLeft()
-    Tesla()
+    forward()
     turnLeft()
-    Tesla()
+    forward()
     turnLeft()
   
