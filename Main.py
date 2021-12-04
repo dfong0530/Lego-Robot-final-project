@@ -1,4 +1,4 @@
-from Helper.PointClass import Point
+from PointClass import Point
 from DFS1 import *
 from Eric import *
 
@@ -151,37 +151,48 @@ Helper Gold functions
 def find_gold_direc(matrix, row, col):
 
     if row > 0:
-
+        print("up")
         forward()
 
         if int(input("Get Data: ")) == 8:
 
+            matrix[row - 1][col].isSafe = True
             return (row - 1, col)
 
-    
-    if col < len(matrix[row]) - 1:
+        back()
 
+    if col < len(matrix[row]) - 1:
+        print("right")
         right()
 
         if int(input("Get Data: ")) == 8:
-
+            
+            matrix[row][col + 1].isSafe = True
             return (row, col + 1)
 
-    if row < len(matrix) - 1:
+        left()
 
+    if row < len(matrix) - 1:
+        print("down")
         back()
 
         if int(input("Get Data: ")) == 8:
 
+            matrix[row + 1][col].isSafe = True
             return (row + 1, col)
 
-    if col > 0:
+        forward()
 
+    if col > 0:
+        print("left")
         left()
 
         if int(input("Get Data")) == 8:
 
+            matrix[row][col - 1].isSafe = True
             return (row, col - 1)
+
+        right()
 
 
 
@@ -347,19 +358,19 @@ def move_robot(direc):
 
     for d in direc:
 
-        if d == "u":
+        if d == "U":
 
             forward()
 
-        elif d == "r":
+        elif d == "R":
 
             right()
 
-        elif d == "d":
+        elif d == "D":
 
             back()
 
-        elif d == "l":
+        elif d == "L":
 
             left()
 
@@ -409,13 +420,14 @@ def solve(matrix, row, col):
 
         if not w and not r and g:
             
-            return find_gold_direc(matrix, col, row)
+            return find_gold_direc(matrix, row, col)
 
         if g:
       
             if check_double_gold(matrix, row, col) != (-1, -1):
          
                 final_loc = check_double_gold(matrix, row, col)
+                matrix[final_loc[0]][final_loc[1]].isSafe = True
                 move_robot(DFS(matrix, col, row, final_loc[1], final_loc[0]))
 
                 return final_loc
@@ -440,15 +452,13 @@ def solve(matrix, row, col):
 
 
         newRow, newCol = visit.pop()
-
+       
         nextPath = DFS(matrix, col, row, newCol, newRow)
 
         print(nextPath)
-        move_robot(DFS(nextPath))
+        move_robot(nextPath)
 
         row,col = newRow, newCol
-
-
 
 
 
@@ -471,13 +481,10 @@ row, col = 3, 0
 
 robot_say("Hello I am Wally")
 
-try:
 
-    loc = solve(matrix, row, col)
 
-except:
+loc = solve(matrix, row, col)
 
-    robot_say("ERROR")
 
 
 
