@@ -1,29 +1,3 @@
-
-
-# def forward():
-
-#     pass
-
-
-# def back():
-
-#     pass
-
-# def left():
-
-#     pass
-
-# def right():
-
-#     pass
-
-
-# def robot_say(s):
-
-#     print(s)
-
-
-
 #!/usr/bin/env python3
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
@@ -54,13 +28,13 @@ rightBlack = rightSensor.reflected_light_intensity
 
 
 def turnRight():
-    motorLeft.run_to_rel_pos(position_sp= 310, speed_sp = 250)
-    motorRight.run_to_rel_pos(position_sp= -310, speed_sp = 250)
+    motorLeft.run_to_rel_pos(position_sp= 275, speed_sp = 250)
+    motorRight.run_to_rel_pos(position_sp= -275, speed_sp = 250)
     sleep(1)
 
 def turnLeft():
-    motorLeft.run_to_rel_pos(position_sp= -310, speed_sp = 250)
-    motorRight.run_to_rel_pos(position_sp= 310, speed_sp = 250)
+    motorLeft.run_to_rel_pos(position_sp= -270, speed_sp = 250)
+    motorRight.run_to_rel_pos(position_sp= 270, speed_sp = 250)
 
     sleep(1)
 
@@ -117,15 +91,49 @@ def right():
     turnLeft()
     
 def back():
-    turnRight()
-    turnRight()
-    forward()
-    turnLeft()
-    turnLeft()
+    motorLeft.on(-30)
+    motorRight.on(-30)
+    sleep(2.75)
+    motorLeft.stop()
+    motorRight.stop()
 
 def robot_say(words):
     sound.speak(words)
 
+def move_robot(n):
+
+    if n == 1:
+
+        forward()
+
+    elif n == 2:
+
+        back()
+
+    elif n == 3:
+
+        turnLeft()
+
+    elif n == 4:
+
+        turnRight()
+
 if __name__ == "__main__":
 
-    forward()
+    '''
+    ###
+    turnLeft()
+    sleep(2)
+    turnRight()
+    sleep(8)
+
+    ###
+    turnRight()
+    sleep(3)
+    turnLeft()
+    '''
+    for i in range(20):
+
+        x = int(input("Enter data: "))
+
+        move_robot(x)

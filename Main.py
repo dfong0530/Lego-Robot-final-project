@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from PointClass import Point
 from DFS1 import *
 from Eric import *
